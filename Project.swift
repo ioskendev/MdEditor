@@ -6,7 +6,16 @@ public var scripts: [TargetScript] {
 
 	var scripts = [TargetScript]()
 
-	let swiftLintScriptString = "SwiftLint/swiftlint --fix && SwiftLint/swiftlint"
+	let swiftLintScriptString = """
+	 export PATH="$PATH:/opt/homebrew/bin"
+	 if which swiftlint > /dev/null; then
+	   swiftlint
+	 else
+	   echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
+	   exit 1
+	 fi
+	 """
+
 	let swiftLintScript = TargetScript.post(script: swiftLintScriptString, name: "SwiftLint")
 
 	scripts.append(swiftLintScript)
@@ -18,9 +27,9 @@ let project = Project(
 	targets: [
 		Target(
 			name: "MdEdit",
-			platform: .iOS,
+			destinations: .iOS,
 			product: .app,
-			bundleId: "ru.ioskendev.MyApp",
+			bundleId: "com.ioskendev.MdEditor",
 			infoPlist: "Resources/Info.plist",
 			sources: ["Sources/**"],
 			resources: ["Resources/**"],
