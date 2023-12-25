@@ -2,28 +2,33 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 import MyPlugin
 
-/*
-                +-------------+
-                |             |
-                |     App     | Contains MdEditor App target and MdEditor unit-test target
-                |             |
-         +------+-------------+-------+
-         |         depends on         |
-         |                            |
- +----v-----+                   +-----v-----+
- |          |                   |           |
- |   Kit    |                   |     UI    |   Two independent frameworks to share code and start modularising your app
- |          |                   |           |
- +----------+                   +-----------+
+public var scripts: [TargetScript] {
 
- */
+	var scripts = [TargetScript]()
 
-// MARK: - Project
+	let swiftLintScriptString = "SwiftLint/swiftlint --fix && SwiftLint/swiftlint"
+	let swiftLintScript = TargetScript.post(script: swiftLintScriptString, name: "SwiftLint")
 
-// Local plugin loaded
-let localHelper = LocalHelper(name: "MyPlugin")
+	scripts.append(swiftLintScript)
+	return scripts
+}
 
-// Creates our project using a helper function defined in ProjectDescriptionHelpers
-let project = Project.app(name: "MdEditor",
-                          destinations: .iOS,
-                          additionalTargets: ["MdEditorKit", "MdEditorUI"])
+let project = Project(
+	name: "MdEdit",
+	targets: [
+		Target(
+			name: "MdEdit",
+			platform: .iOS,
+			product: .app,
+			bundleId: "ru.ioskendev.MyApp",
+			infoPlist: "Resources/Info.plist",
+			sources: ["Sources/**"],
+			resources: ["Resources/**"],
+			scripts: scripts,
+			dependencies: [
+				/* Target dependencies can be defined here */
+				/* .framework(path: "framework") */
+			]
+		)
+	]
+)
