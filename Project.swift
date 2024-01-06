@@ -16,7 +16,9 @@ public var scripts: [TargetScript] {
 	 fi
 	 """
 
-	let swiftLintScript = TargetScript.post(script: swiftLintScriptString, name: "SwiftLint")
+	let swiftLintScript = TargetScript.post(
+		script: swiftLintScriptString, name: "SwiftLint", basedOnDependencyAnalysis: false
+	)
 
 	scripts.append(swiftLintScript)
 	return scripts
@@ -24,19 +26,22 @@ public var scripts: [TargetScript] {
 
 let project = Project(
 	name: "MdEdit",
+	packages: [
+		.remote(url: "https://github.com/ioskendev/DataStructuresPackage", requirement: .branch("main")),
+		.remote(url: "https://github.com/ioskendev/TaskManagerPackage", requirement: .branch("main"))
+	],
 	targets: [
 		Target(
 			name: "MdEdit",
 			destinations: .iOS,
 			product: .app,
 			bundleId: "com.ioskendev.MdEditor",
-			infoPlist: "Resources/Info.plist",
 			sources: ["Sources/**"],
 			resources: ["Resources/**"],
 			scripts: scripts,
 			dependencies: [
-				/* Target dependencies can be defined here */
-				/* .framework(path: "framework") */
+				.package(product: "DataStructuresPackage"),
+				.package(product: "TaskManagerPackage")
 			]
 		)
 	]
